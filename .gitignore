@@ -12,3 +12,12 @@ build
 !*.ipynb
 !requirements.txt
 !.env_sample
+!.env_sample_docker
+!Dockerfile
+!start_docker.sh
+!docker-compose.yml
+!notifications.txt
+!user_defined_crop_area.txt
+!.dockerignore
+!blanket_model
+!blanket_model/**

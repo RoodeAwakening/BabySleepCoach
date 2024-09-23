@@ -14,51 +14,37 @@ This work is licensed under a
 ---
 ## [As seen on YouTube](https://www.youtube.com/channel/UCzxiOKO3vX1ER_U3Z_eY_yw)
 
-This repo contains code to run the AI Baby Sleep Tracking service as well as a web application which provides the user with analysis and charts based on the recorded sleep data.
+This repo contains code to run the The Baby Sleep Coach. The Baby Sleep Coach provides sleep analysis of your baby, using only a video feed. You can access the sleep analysis via a locally hosted web app, which runs on launch.
 
 ## Pre-requisites
 
-- Camera which supports RTSP
-- Compute accessible via HTTP requests (I used a Raspberry Pi, but you can use any computer)
+- Docker
+- USB webcam or camera which supports RTSP
+- Computer accessible via HTTP requests (I used a Raspberry Pi, but you can use any computer)
 
-## Setup
+## tl;dr Run it with Docker
 
-There are two components to configure:
-1) A sleep tracking python script
-2) A web application
+Copy the .env_sample template into .env
 
-### Warning: jank ahead
+```cp .env_sample .env```
 
-I don't treat these projects as I would in industry. The result is a very monolithic and duct-tapey project.
+### Configure .env file:
 
-If there is a desire, I will refactor and make this more repeatable and easy to use.
+`CAM_URL` URL of your camera. Likely `rtsp://admin:password@192.168.CAMERA_IP:554/h264Preview_01_sub` or `/dev/video0` for a webcam
 
-### Part 1: Sleep Tracking Script
+`PORT` Port for accessing web app
 
-Install requirements: `pip install -r requirements.txt`
+`REACT_APP_BACKEND_IP` IP of backend/api layer. Likely 192.168.COMPUTER_IP:8001
 
-Run: `python main.py`
+`REACT_APP_RESOURCE_SERVER_IP` IP of resource server (runs on launch) Likely 192.168.COMPUTER_IP:8000
 
-That's it. Except this is where the fun starts. 
+`HATCH_IP` (optional) IP of your hatch for wake light
 
-Most of the dependencies are self explanatory, the only issue I had was installing [MediaPipe](https://google.github.io/mediapipe/) on Raspbian. I believe I used https://pypi.org/project/mediapipe-rpi4/, but I ran into a number of other issues I won't document here. glhf
+`VIDEO_PATH` (optional) use to set path to recorded footage for debugging
 
-There are number of environment variables and holes you'll need to fill with info about your environment. Instead of fixing things, I left a lot of comments.
+*Remarks:* 
+- instead of `192.168.COMPUTER_IP` you can use `raspberrypi.local` (or whatever name you gave when setting up your Raspberry Pi)
+- when using `/dev/video0` (for USB webcam), also uncomment corresponding lines in `docker-compose.yml`
 
-Alternatively you can `touch .env` and then copy and paste the contents of `.env_sample` into it. Then fill in the blanks.
-
-The sleep data is written to `sleep_logs.csv`. I primed this file with a few rows as an example. Feel free to remove these and start from scratch.
-
-### Part 2: The Web App
-
-This one is more straight forward. Just make sure you have [`yarn`](https://yarnpkg.com/getting-started/install).
-
-Execute the following commands:
-
-`cd webapp; yarn install; yarn start;`
-
-And you'll probably get a warning about the app trying to boot on port `80`. You can change it to whatever you want in the package.json.
-
-You'll need to update some paths and IPs in the code.
-<br/><br/>
-## Someone send me proof you got it all running.
+### Run it
+`docker compose up`
